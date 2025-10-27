@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Sorting System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+        
+        .upload-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 20px;
+            background: white;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+        
+        .file-input-label:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .results-section.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .confidence-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        
+        .category-organic {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .category-inorganic {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .image-preview {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗑️ Smart Waste Sorting System</h1>
+            <p>AI-Powered Waste Classification for Recycling Industry</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="upload-section">
+                <h2>Upload Waste Image</h2>
+                <div class="file-input-wrapper">
+                    <input type="file" id="imageInput" class="file-input" accept="image/*">
+                    <label for="imageInput" class="file-input-label">
+                        📷 Click to upload or drag and drop waste image
+                    </label>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="predictBtn" class="btn" disabled>🔍 Classify Waste</button>
+                    <button id="clearBtn" class="btn" style="background: #6c757d;">🗑️ Clear</button>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing waste image...</p>
+            </div>
+            
+            <div class="results-section" id="resultsSection">
+                <h2>Classification Results</h2>
+                <div id="imagePreview"></div>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const predictBtn = document.getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loading = document.getElementById('loading');
+        const resultsSection = document.getElementById('resultsSection');
+        const imagePreview = document.getElementById('imagePreview');
+        const resultsContent = document.getElementById('resultsContent');
+        
+        let selectedImage = null;
+        
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedImage = file;
+                predictBtn.disabled = false;
+                
+                // Show image preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `
+                        <img src="${e.target.result}" class="image-preview" alt="Selected image">
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        predictBtn.addEventListener('click', async function() {
+            if (!selectedImage) return;
+            
+            // Show loading
+            loading.style.display = 'block';
+            resultsSection.classList.remove('show');
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', selectedImage);
+                
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayResults(result);
+                } else {
+                    throw new Error(result.error || 'Prediction failed');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultsContent.innerHTML = `
+                    <div class="result-card" style="background: #f8d7da; color: #721c24;">
+                        <h3>❌ Error</h3>
+                        <p>Failed to classify image: ${error.message}</p>
+                    </div>
+                `;
+                resultsSection.classList.add('show');
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+        
+        clearBtn.addEventListener('click', function() {
+            imageInput.value = '';
+            selectedImage = null;
+            predictBtn.disabled = true;
+            imagePreview.innerHTML = '';
+            resultsSection.classList.remove('show');
+        });
+        
+        function displayResults(result) {
+            const confidence = (result.confidence * 100).toFixed(1);
+            const categoryClass = result.predicted_category === 'organic' ? 'category-organic' : 'category-inorganic';
+            
+            let allPredictionsHtml = '';
+            for (const [className, conf] of Object.entries(result.all_predictions)) {
+                const confPercent = (conf * 100).toFixed(1);
+                allPredictionsHtml += `
+                    <div style="margin: 10px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>${className}</span>
+                            <span>${confPercent}%</span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${confPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsContent.innerHTML = `
+                <div class="result-card">
+                    <h3>🎯 Primary Classification</h3>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div class="category-badge ${categoryClass}">
+                            ${result.predicted_class}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong>Category:</strong> ${result.predicted_category}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong>Confidence:</strong> ${confidence}%
+                        </div>
+                        <div class="confidence-bar" style="margin-top: 15px;">
+                            <div class="confidence-fill" style="width: ${confidence}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>📊 All Predictions</h3>
+                    ${allPredictionsHtml}
+                </div>
+                
+                <div class="result-card">
+                    <h3>🤖 Sorting Decision</h3>
+                    <div style="text-align: center;">
+                        <div class="category-badge ${categoryClass}" style="font-size: 1.2em; padding: 15px 25px;">
+                            Sort to ${result.predicted_category} bin
+                        </div>
+                        <p style="margin-top: 15px; color: #6c757d;">
+                            Confidence: ${confidence}% | Timestamp: ${new Date(result.timestamp).toLocaleString()}
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            resultsSection.classList.add('show');
+        }
+        
+        // Check API health on page load
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                console.log('API Health:', health);
+            } catch (error) {
+                console.error('API Health Check Failed:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+

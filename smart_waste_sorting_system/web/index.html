@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Sorting System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-recycle"></i> Smart Waste Sorting System</h1>
+            <p>Real-time waste detection and recycling industry mapping</p>
+        </header>
+
+        <main class="main-content">
+            <div class="camera-section">
+                <div class="camera-container">
+                    <video id="cameraFeed" autoplay muted></video>
+                    <canvas id="detectionCanvas"></canvas>
+                    <div class="camera-controls">
+                        <button id="startCamera" class="btn btn-primary">
+                            <i class="fas fa-video"></i> Start Camera
+                        </button>
+                        <button id="stopCamera" class="btn btn-secondary" disabled>
+                            <i class="fas fa-stop"></i> Stop Camera
+                        </button>
+                        <button id="captureImage" class="btn btn-success" disabled>
+                            <i class="fas fa-camera"></i> Capture & Analyze
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detection-section">
+                <div class="detection-results">
+                    <h2><i class="fas fa-search"></i> Detection Results</h2>
+                    <div id="detectionStatus" class="status-indicator">
+                        <i class="fas fa-circle"></i> Ready
+                    </div>
+                    <div id="detectionResults" class="results-container">
+                        <div class="no-results">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Start camera and capture an image to detect waste items</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="industry-mapping">
+                    <h2><i class="fas fa-industry"></i> Industry Applications</h2>
+                    <div id="industryInfo" class="industry-container">
+                        <div class="no-industry-info">
+                            <i class="fas fa-building"></i>
+                            <p>Industry information will appear here after waste detection</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Items Detected</h3>
+                    <span id="totalDetections">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Organic Waste</h3>
+                    <span id="organicCount">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Inorganic Waste</h3>
+                    <span id="inorganicCount">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Recycling Rate</h3>
+                    <span id="recyclingRate">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 Smart Waste Sorting System. Powered by AI and Linear MCP.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
